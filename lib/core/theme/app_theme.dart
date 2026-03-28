@@ -2,25 +2,25 @@ import 'package:flutter/material.dart';
 
 abstract class AppColors {
   // Backgrounds
-  static const black   = Color(0xFF000000); 
+  static const black = Color(0xFF000000); 
   static const surface = Color(0xFF161616); 
   static const navPill = Color(0xFF1C1C1C); 
 
-  static const white         = Color(0xFFF2F2F2); 
+  static const white = Color(0xFFF2F2F2); 
   static const textSecondary = Color(0xFFD9D9D9); 
-  static const textMuted     = Color(0xFF808080);
+  static const textMuted = Color(0xFF808080);
 
-  static const red    = Color(0xFFEC232B); 
+  static const red = Color(0xFFEC232B); 
   static const redDim = Color(0x24EC232B); 
 
-  static const redError   = Color(0xFFFF0404); 
+  static const redError = Color(0xFFFF0404); 
   static const redErrorBg = Color(0x24FF0404); 
 
   static const border = Color(0xFF2A2A2A); 
 
   static const success = Color(0xFF388E3C);
   static const warning = Color(0xFFF57F17);
-  static const error   = redError;
+  static const error = redError;
 }
 
 abstract class AppFonts {
@@ -30,11 +30,11 @@ abstract class AppFonts {
 }
 
 abstract class AppRadius {
-  static const double navPill     = 39.5; 
-  static const double button      = 20.0; 
-  static const double card        = 5.0;  
-  static const double searchBar   = 30.5; 
-  static const double chip        = 20.0; 
+  static const double navPill = 39.5; 
+  static const double button = 20.0; 
+  static const double card = 5.0;  
+  static const double searchBar = 30.5; 
+  static const double chip = 20.0; 
   static const double errorBanner = 20.0; 
 }
 
