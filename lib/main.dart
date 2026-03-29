@@ -2,6 +2,7 @@ import 'package:afterhours/core/router/app_router.dart';
 import 'package:afterhours/core/theme/app_theme.dart';
 import 'package:afterhours/core/utils/dio_client.dart';
 import 'package:afterhours/features/auth/presentation/providers/auth_provider.dart';
+import 'package:afterhours/features/cart/data/models/cart_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +23,8 @@ Future<void> main() async {
   );
 
   await Hive.initFlutter();
+  Hive.registerAdapter(CartItemModelAdapter());
+  await Hive.openBox<CartItemModel>('cartBox');
   // register cart adapter 
   
   final container = ProviderContainer();
@@ -29,7 +32,12 @@ Future<void> main() async {
     await container.read(authProvider.notifier).logout();
   });
 
-  runApp(const MyApp());
+  runApp(
+    UncontrolledProviderScope(
+      container: container, 
+      child: const MyApp(),
+    )
+  );
 }
 
 class MyApp extends ConsumerWidget {

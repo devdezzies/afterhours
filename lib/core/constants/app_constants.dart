@@ -12,7 +12,9 @@ abstract class AppConstants {
   static const String keyUsername = 'user_name';
   static const String keyDefaultAddress = 'default_address'; 
   static const String keyDefaultLat = 'default_lat'; 
-  static const String keyDefaultLng = 'default_lng';
+  static const String keyDefaultLng = 'default_lng'; 
+
+  static const int cartItemTypeId = 0;
 }
 
 enum ProductCategory {
