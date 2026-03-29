@@ -1,6 +1,6 @@
 # afterhours
 
-- [ ] login page and auth gateway
+- [x] login page and auth gateway
 - [ ] home page + bottom navbar 
 - [ ] feeds display (horizontal list) 
 - [ ] product details page 

@@ -1,4 +1,3 @@
-import 'package:afterhours/core/router/app_router.dart';
 import 'package:afterhours/core/theme/app_theme.dart';
 import 'package:afterhours/core/utils/api_result.dart';
 import 'package:afterhours/features/auth/data/repositories/auth_repository.dart';
