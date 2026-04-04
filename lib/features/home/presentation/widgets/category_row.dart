@@ -76,15 +76,7 @@ class _SkeletonRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       itemCount: 4,
       separatorBuilder: (_, _) => const SizedBox(width: 8),
-      itemBuilder: (_, _) => const SizedBox(
-        width: 135, height: 135,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: AppColors.navPill,
-            borderRadius: BorderRadius.all(Radius.circular(8))
-          ),
-        ),
-      ),
+      itemBuilder: (_, _) => ProductCardSkeleton(width: 135, height: 135),
     );
   }
 }
