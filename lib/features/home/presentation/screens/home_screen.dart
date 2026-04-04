@@ -31,7 +31,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final greeting = ref.watch(greetingProvider); 
-    final username = ref.watch(homeUserNameProvider);
 
     return Scaffold(
       body: RefreshIndicator(
@@ -39,7 +38,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: AppColors.surface, 
         onRefresh: refresh, 
         child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
+          
           slivers: [
             SliverToBoxAdapter(
               child: SizedBox( 
@@ -50,7 +50,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             SliverToBoxAdapter(
               child: Center(
                 child: Text(
-                  "$greeting${username.isNotEmpty ? ', $username' : ''}!", 
+                  '$greeting!', 
                   style: AppTextStyles.displayTitle,
                 ),
               )

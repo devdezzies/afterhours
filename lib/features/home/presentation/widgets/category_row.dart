@@ -44,7 +44,7 @@ class CategoryRow extends ConsumerWidget {
         const SizedBox(height: 12),
 
         SizedBox(
-          height: 125,
+          height: 135,
           child: productsAsync.when(
             loading: () => _SkeletonRow(),
             error: (e, _) => _ErrorRow(message: e.toString()),
@@ -77,7 +77,7 @@ class _SkeletonRow extends StatelessWidget {
       itemCount: 4,
       separatorBuilder: (_, _) => const SizedBox(width: 8),
       itemBuilder: (_, _) => const SizedBox(
-        width: 125, height: 125,
+        width: 135, height: 135,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: AppColors.navPill,

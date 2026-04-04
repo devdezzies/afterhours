@@ -15,7 +15,6 @@ final greetingProvider = Provider<String>((ref) {
 final homeCategoryProvider = FutureProvider.autoDispose 
   .family<List<ProductModel>, ProductCategory>((ref, category) async {
     final repo = ref.watch(productRepositoryProvider);
-
     final result = await repo.getProducts(category: category, page: 1);
     
     switch (result) {

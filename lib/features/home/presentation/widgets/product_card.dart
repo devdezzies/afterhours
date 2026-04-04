@@ -13,8 +13,8 @@ class ProductCard extends StatelessWidget {
   const ProductCard({
     super.key,
     required this.product,
-    this.width = 132,
-    this.height = 125,
+    this.width = 135,
+    this.height = 135,
   });
 
   @override
@@ -108,10 +108,10 @@ class _ProductImage extends StatelessWidget {
   }
 
   Widget _placeholder() => Container(
-      color: AppColors.surface,
-      child: const Center(
-        child: Icon(Icons.image_not_supported_outlined,
-            color: AppColors.textMuted, size: 34),
-      ),
-    );
+    color: AppColors.surface,
+    child: const Center(
+      child: Icon(Icons.image_not_supported_outlined,
+          color: AppColors.textMuted, size: 34),
+    ),
+  );
 }
