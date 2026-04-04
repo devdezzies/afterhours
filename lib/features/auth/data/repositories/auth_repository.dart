@@ -19,8 +19,8 @@ class LoginResponse {
     final user = json['user'] as Map<String, dynamic>;
     return LoginResponse(
       token: json['token'], 
-      userId: user['user_id'], 
-      username: user['username'] ?? '', 
+      userId: user['id'], 
+      username: user['name'] ?? '', 
       email: user['email'] ?? ''
     );
   }
@@ -45,7 +45,7 @@ class AuthRepository {
     return runApiCall(() async {
       final dio = ref.read(dioProvider); 
       final response = await dio.post('/auth/register', data: {
-        'username': username, 
+        'name': username, 
         'email': email, 
         'password': password  
       });
