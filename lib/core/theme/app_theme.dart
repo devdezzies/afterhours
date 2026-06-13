@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 
 abstract class AppColors {
   // Backgrounds
-  static const black = Color(0xFF000000); 
-  static const surface = Color(0xFF161616); 
-  static const navPill = Color(0xFF1C1C1C); 
+  static const black = Color(0xFF000000);
+  static const surface = Color(0xFF161616);
+  static const navPill = Color(0xFF1C1C1C);
 
-  static const white = Color(0xFFF2F2F2); 
-  static const textSecondary = Color(0xFFD9D9D9); 
+  static const white = Color(0xFFF2F2F2);
+  static const textSecondary = Color(0xFFD9D9D9);
   static const textMuted = Color(0xFF808080);
 
-  static const red = Color(0xFFEC232B); 
-  static const redDim = Color(0x24EC232B); 
+  static const red = Color(0xFFEC232B);
+  static const redDim = Color(0x24EC232B);
 
-  static const redError = Color(0xFFFF0404); 
-  static const redErrorBg = Color(0x24FF0404); 
+  static const redError = Color(0xFFFF0404);
+  static const redErrorBg = Color(0x24FF0404);
 
-  static const border = Color(0xFF2A2A2A); 
+  static const border = Color(0xFF2A2A2A);
 
   static const success = Color(0xFF388E3C);
   static const warning = Color(0xFFF57F17);
+  static const yellow = Color(0xFFFFCC00);
   static const error = redError;
 }
 
@@ -30,12 +31,12 @@ abstract class AppFonts {
 }
 
 abstract class AppRadius {
-  static const double navPill = 39.5; 
-  static const double button = 20.0; 
-  static const double card = 5.0;  
-  static const double searchBar = 30.5; 
-  static const double chip = 20.0; 
-  static const double errorBanner = 20.0; 
+  static const double navPill = 39.5;
+  static const double button = 20.0;
+  static const double card = 5.0;
+  static const double searchBar = 30.5;
+  static const double chip = 20.0;
+  static const double errorBanner = 20.0;
 }
 
 abstract class AppTextStyles {
@@ -205,7 +206,7 @@ abstract class AppTheme {
 
       colorScheme: const ColorScheme.dark(
         primary: AppColors.red,
-        onPrimary: AppColors.black,       
+        onPrimary: AppColors.black,
         secondary: AppColors.white,
         onSecondary: AppColors.black,
         surface: AppColors.surface,
@@ -215,22 +216,21 @@ abstract class AppTheme {
         outline: AppColors.border,
       ),
 
-
       fontFamily: AppFonts.ndot,
 
       textTheme: const TextTheme(
-        displayLarge: AppTextStyles.displayBrand,  
-        displayMedium: AppTextStyles.displayTitle,  
-        displaySmall: AppTextStyles.displayHero,  
-        titleLarge: AppTextStyles.sectionLabel,  
-        titleMedium: AppTextStyles.productName,   
-        titleSmall: AppTextStyles.sectionMeta,   
-        bodyLarge: AppTextStyles.inputValue,    
-        bodyMedium: AppTextStyles.bodyMono,      
-        bodySmall: AppTextStyles.helperText,   
-        labelLarge: AppTextStyles.button,        
-        labelMedium: AppTextStyles.fieldLabel,    
-        labelSmall: AppTextStyles.orderId,       
+        displayLarge: AppTextStyles.displayBrand,
+        displayMedium: AppTextStyles.displayTitle,
+        displaySmall: AppTextStyles.displayHero,
+        titleLarge: AppTextStyles.sectionLabel,
+        titleMedium: AppTextStyles.productName,
+        titleSmall: AppTextStyles.sectionMeta,
+        bodyLarge: AppTextStyles.inputValue,
+        bodyMedium: AppTextStyles.bodyMono,
+        bodySmall: AppTextStyles.helperText,
+        labelLarge: AppTextStyles.button,
+        labelMedium: AppTextStyles.fieldLabel,
+        labelSmall: AppTextStyles.orderId,
       ),
 
       appBarTheme: const AppBarTheme(
@@ -259,18 +259,18 @@ abstract class AppTheme {
 
       inputDecorationTheme: InputDecorationTheme(
         filled: false,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
         labelStyle: AppTextStyles.fieldLabel,
-        floatingLabelStyle:
-            AppTextStyles.fieldLabel.copyWith(color: AppColors.textSecondary),
-        hintStyle:
-            AppTextStyles.fieldLabel.copyWith(color: AppColors.textMuted),
+        floatingLabelStyle: AppTextStyles.fieldLabel.copyWith(
+          color: AppColors.textSecondary,
+        ),
+        hintStyle: AppTextStyles.fieldLabel.copyWith(
+          color: AppColors.textMuted,
+        ),
         errorStyle: AppTextStyles.errorMessage.copyWith(fontSize: 11),
 
         enabledBorder: const UnderlineInputBorder(
-          borderSide:
-              BorderSide(color: AppColors.textSecondary, width: 1),
+          borderSide: BorderSide(color: AppColors.textSecondary, width: 1),
         ),
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: AppColors.red, width: 1.5),
@@ -285,8 +285,7 @@ abstract class AppTheme {
           borderSide: BorderSide(color: AppColors.textMuted, width: 1),
         ),
         border: const UnderlineInputBorder(
-          borderSide:
-              BorderSide(color: AppColors.textSecondary, width: 1),
+          borderSide: BorderSide(color: AppColors.textSecondary, width: 1),
         ),
       ),
 
@@ -344,14 +343,14 @@ abstract class AppTheme {
         selectedColor: AppColors.redDim,
         disabledColor: AppColors.surface,
         labelStyle: AppTextStyles.fieldLabel,
-        secondaryLabelStyle:
-            AppTextStyles.fieldLabel.copyWith(color: AppColors.red),
+        secondaryLabelStyle: AppTextStyles.fieldLabel.copyWith(
+          color: AppColors.red,
+        ),
         side: const BorderSide(color: AppColors.border, width: 1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppRadius.chip),
         ),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         showCheckmark: false,
       ),
 
@@ -365,23 +364,17 @@ abstract class AppTheme {
         backgroundColor: AppColors.redErrorBg,
         contentTextStyle: AppTextStyles.errorMessage,
         shape: RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(AppRadius.errorBanner),
-          side:
-              const BorderSide(color: AppColors.redError, width: 1),
+          borderRadius: BorderRadius.circular(AppRadius.errorBanner),
+          side: const BorderSide(color: AppColors.redError, width: 1),
         ),
         behavior: SnackBarBehavior.floating,
         elevation: 0,
       ),
 
-      iconTheme: const IconThemeData(
-        color: AppColors.white,
-        size: 24,
-      ),
+      iconTheme: const IconThemeData(color: AppColors.white, size: 24),
 
       listTileTheme: const ListTileThemeData(
-        contentPadding:
-            EdgeInsets.symmetric(horizontal: 18, vertical: 0),
+        contentPadding: EdgeInsets.symmetric(horizontal: 18, vertical: 0),
         minVerticalPadding: 0,
         iconColor: AppColors.white,
         textColor: AppColors.white,
@@ -408,53 +401,50 @@ abstract class AppTheme {
 
 abstract class AppSnackBar {
   static SnackBar error(String message) => SnackBar(
-        content: Row(
-          children: [
-            Container(
-              width: 17,
-              height: 17,
-              decoration: const BoxDecoration(
-                color: AppColors.redError,
-                shape: BoxShape.circle,
-              ),
-              child: const Center(
-                child: Text(
-                  'x',
-                  style: TextStyle(
-                    fontFamily: AppFonts.ndot,
-                    fontSize: 10,
-                    color: AppColors.black,
-                  ),
-                ),
+    content: Row(
+      children: [
+        Container(
+          width: 17,
+          height: 17,
+          decoration: const BoxDecoration(
+            color: AppColors.redError,
+            shape: BoxShape.circle,
+          ),
+          child: const Center(
+            child: Text(
+              'x',
+              style: TextStyle(
+                fontFamily: AppFonts.ndot,
+                fontSize: 10,
+                color: AppColors.black,
               ),
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(message, style: AppTextStyles.errorMessage),
-            ),
-          ],
+          ),
         ),
-        backgroundColor: AppColors.redErrorBg,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.errorBanner),
-          side: const BorderSide(color: AppColors.redError, width: 1),
-        ),
-        behavior: SnackBarBehavior.floating,
-        elevation: 0,
-      );
+        const SizedBox(width: 10),
+        Expanded(child: Text(message, style: AppTextStyles.errorMessage)),
+      ],
+    ),
+    backgroundColor: AppColors.redErrorBg,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppRadius.errorBanner),
+      side: const BorderSide(color: AppColors.redError, width: 1),
+    ),
+    behavior: SnackBarBehavior.floating,
+    elevation: 0,
+  );
 
   static SnackBar info(String message) => SnackBar(
-        content: Text(
-          message,
-          style: AppTextStyles.helperText
-              .copyWith(color: AppColors.white),
-        ),
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppRadius.errorBanner),
-          side: const BorderSide(color: AppColors.border, width: 1),
-        ),
-        behavior: SnackBarBehavior.floating,
-        elevation: 0,
-      );
+    content: Text(
+      message,
+      style: AppTextStyles.helperText.copyWith(color: AppColors.white),
+    ),
+    backgroundColor: AppColors.surface,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppRadius.errorBanner),
+      side: const BorderSide(color: AppColors.border, width: 1),
+    ),
+    behavior: SnackBarBehavior.floating,
+    elevation: 0,
+  );
 }
