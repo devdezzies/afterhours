@@ -47,7 +47,7 @@ class PillNavBar extends StatelessWidget {
         decoration: BoxDecoration( 
           boxShadow: [
             BoxShadow(
-              color: AppColors.black.withOpacity(0.50), 
+              color: AppColors.black.withValues(alpha: 0.50),
               blurRadius: 10, 
               offset: const Offset(0, 0)
             )

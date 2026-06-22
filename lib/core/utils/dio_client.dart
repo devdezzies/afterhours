@@ -1,7 +1,7 @@
 import 'package:afterhours/core/constants/app_constants.dart';
+import 'package:afterhours/core/utils/secure_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 typedef LogoutCallback = Future<void> Function();
 LogoutCallback? on401Logout;
@@ -13,8 +13,7 @@ void configureDio401Handler(LogoutCallback logoutCallback) {
 class AuthInterceptor extends Interceptor {
   @override  
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final prefs = await SharedPreferences.getInstance(); 
-    final token = prefs.getString(AppConstants.keyAuthToken);
+    final token = await SecureStorage.readToken();
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
     }
@@ -55,18 +54,4 @@ final dioProvider = Provider<Dio>((ref) {
   }());
 
   return dio;
-});
-
-final aiDioProvider = Provider<Dio>((ref) {
-  return Dio( 
-    BaseOptions(
-      baseUrl: AppConstants.aiServiceUrl, 
-      connectTimeout: AppConstants.connectTimeout,  
-      receiveTimeout: AppConstants.receiveTimeout, 
-      headers: {
-        'Accept': 'application/json', 
-        'Content-Type': 'application/json'
-      }
-    )
-  );
 });

@@ -6,21 +6,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ProductRepository {
   final ProductRemoteDatasource remoteDataSource;
-  
+
   const ProductRepository(this.remoteDataSource);
 
   Future<ApiResult<PaginatedProducts>> getProducts({
-    int page = 1, 
-    ProductCategory? category, 
-    double? maxPrice, 
-    List<String>? keywords
+    int page = 1,
+    ProductCategory? category,
+    double? maxPrice,
+    List<String>? keywords,
   }) {
     return runApiCall(() async {
       final json = await remoteDataSource.fetchProducts(
-        page: page, 
-        category: category, 
-        maxPrice: maxPrice, 
-        keywords: keywords
+        page: page,
+        category: category,
+        maxPrice: maxPrice,
+        keywords: keywords,
       );
       return PaginatedProducts.fromJson(json);
     });
@@ -29,7 +29,8 @@ class ProductRepository {
   Future<ApiResult<ProductModel>> getProductById(String id) {
     return runApiCall(() async {
       final json = await remoteDataSource.fetchProductById(id);
-      return ProductModel.fromJson(json['data'] as Map<String, dynamic>); 
+      final data = json['data'];
+      return ProductModel.fromJson(data is Map<String, dynamic> ? data : json);
     });
   }
 }

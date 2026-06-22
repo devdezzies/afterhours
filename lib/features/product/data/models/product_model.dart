@@ -1,12 +1,12 @@
 import 'package:afterhours/core/constants/app_constants.dart';
 
 class ProductModel {
-  final String id; 
-  final String name; 
+  final String id;
+  final String name;
   final String description;
-  final double price; 
-  final int stock; 
-  final ProductCategory category; 
+  final double price;
+  final int stock;
+  final ProductCategory category;
   final String imageUrl;
 
   const ProductModel({
@@ -16,7 +16,7 @@ class ProductModel {
     required this.price,
     required this.stock,
     required this.category,
-    required this.imageUrl
+    required this.imageUrl,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -27,7 +27,7 @@ class ProductModel {
       price: (json['price'] as num).toDouble(),
       stock: json['stock'] as int,
       category: ProductCategory.fromString(json['category'] as String),
-      imageUrl: json['image_url'] as String
+      imageUrl: json['image_url'] as String,
     );
   }
 
@@ -39,7 +39,7 @@ class ProductModel {
       'price': price,
       'stock': stock,
       'category': category.toApiString(),
-      'image_url': imageUrl
+      'image_url': imageUrl,
     };
   }
 
@@ -50,7 +50,7 @@ class ProductModel {
     double? price,
     int? stock,
     ProductCategory? category,
-    String? imageUrl
+    String? imageUrl,
   }) {
     return ProductModel(
       id: id ?? this.id,
@@ -59,13 +59,16 @@ class ProductModel {
       price: price ?? this.price,
       stock: stock ?? this.stock,
       category: category ?? this.category,
-      imageUrl: imageUrl ?? this.imageUrl
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
-  
+
   @override
   bool operator ==(Object other) {
-    return identical(this, other) || (other is ProductModel && runtimeType == other.runtimeType && id == other.id);
+    return identical(this, other) ||
+        (other is ProductModel &&
+            runtimeType == other.runtimeType &&
+            id == other.id);
   }
 
   @override
@@ -82,7 +85,7 @@ class PaginatedProducts {
   const PaginatedProducts({
     required this.products,
     required this.currentPage,
-    required this.lastPage
+    required this.lastPage,
   });
 
   bool get hasMore => currentPage < lastPage;
@@ -90,9 +93,11 @@ class PaginatedProducts {
   factory PaginatedProducts.fromJson(Map<String, dynamic> json) {
     final rawList = json['data'] as List<dynamic>;
     return PaginatedProducts(
-      products: rawList.map((e) => ProductModel.fromJson(e as Map<String, dynamic>)).toList(),
+      products: rawList
+          .map((e) => ProductModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       currentPage: json['current_page'] as int,
-      lastPage: json['last_page'] as int
+      lastPage: json['last_page'] as int,
     );
   }
 }
