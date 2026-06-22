@@ -14,6 +14,13 @@ class OrderRepository {
       return OrdersResponse.fromJson(json).orders;
     });
   }
+
+  Future<ApiResult<OrderModel>> getOrder(String id) {
+    return runApiCall(() async {
+      final json = await remoteDatasource.fetchOrder(id);
+      return OrderModel.fromJson(json['data'] as Map<String, dynamic>);
+    });
+  }
 }
 
 final orderRepositoryProvider = Provider<OrderRepository>((ref) {

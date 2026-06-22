@@ -4,6 +4,8 @@ import 'package:afterhours/features/home/presentation/providers/home_provider.da
 import 'package:afterhours/features/home/presentation/widgets/category_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:afterhours/core/router/app_router.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -56,7 +58,32 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               )
             ), 
 
-            // search bar 
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+                child: InkWell(
+                  onTap: () => context.push(AppRoutes.search),
+                  borderRadius: BorderRadius.circular(AppRadius.searchBar),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 14,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppRadius.searchBar),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.search, color: AppColors.red),
+                        const SizedBox(width: 12),
+                        Text('SEARCH PRODUCTS', style: AppTextStyles.helperText),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
 
             SliverList(
               delegate: SliverChildBuilderDelegate(

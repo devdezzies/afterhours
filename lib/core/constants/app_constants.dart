@@ -3,10 +3,6 @@ abstract class AppConstants {
     'BASE_URL',
     defaultValue: 'http://10.0.2.2:8000/api',
   );
-  static const String aiServiceUrl = String.fromEnvironment(
-    'AI_SERVICE_URL',
-    defaultValue: 'https://localhost:3345/search',
-  );
   static const String currencyPrefix = 'RP';
 
   static const Duration connectTimeout = Duration(seconds: 15);
@@ -87,17 +83,23 @@ enum ProductCategory {
 
 enum OrderStatus {
   pending,
+  processing,
   shipped,
-  delivered;
+  delivered,
+  cancelled;
 
   static OrderStatus fromString(String value) {
     switch (value) {
       case 'pending':
         return OrderStatus.pending;
+      case 'processing':
+        return OrderStatus.processing;
       case 'shipped':
         return OrderStatus.shipped;
       case 'delivered':
         return OrderStatus.delivered;
+      case 'cancelled':
+        return OrderStatus.cancelled;
       default:
         throw ArgumentError('Unknown status: $value');
     }
@@ -107,10 +109,14 @@ enum OrderStatus {
     switch (this) {
       case OrderStatus.pending:
         return 'PENDING';
+      case OrderStatus.processing:
+        return 'PROCESSING';
       case OrderStatus.shipped:
         return 'SHIPPED';
       case OrderStatus.delivered:
         return 'DELIVERED';
+      case OrderStatus.cancelled:
+        return 'CANCELLED';
     }
   }
 }

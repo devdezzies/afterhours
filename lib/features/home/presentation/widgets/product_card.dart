@@ -83,7 +83,7 @@ class _ProductCardSkeletonState extends State<ProductCardSkeleton>
         width: widget.width,
         height: widget.height,
         decoration: BoxDecoration(
-          color: AppColors.surface.withOpacity(_anim.value + 0.3),
+          color: AppColors.surface.withValues(alpha: _anim.value + 0.3),
           borderRadius: BorderRadius.circular(AppRadius.card),
         ),
       ),

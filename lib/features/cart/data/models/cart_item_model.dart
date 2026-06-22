@@ -34,8 +34,8 @@ class CartItemModel extends HiveObject {
 
   double get lineTotal => priceSnapshot * quantity; 
 
-  CartItemModel copyWith({int? quantity}) {
-    return CartItemModel(productId: productId, productName: productName, priceSnapshot: priceSnapshot, quantity: quantity ?? this.quantity, imageUrl: imageUrl, category: category); 
+  CartItemModel copyWith({int? quantity, double? priceSnapshot}) {
+    return CartItemModel(productId: productId, productName: productName, priceSnapshot: priceSnapshot ?? this.priceSnapshot, quantity: quantity ?? this.quantity, imageUrl: imageUrl, category: category);
   }
 
   Map<String, dynamic> toSyncPayload() => {
@@ -44,4 +44,4 @@ class CartItemModel extends HiveObject {
   };
 
 
-} 
+}

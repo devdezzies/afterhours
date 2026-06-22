@@ -25,3 +25,12 @@ class OrderController extends AsyncNotifier<List<OrderModel>> {
 final orderProvider = AsyncNotifierProvider<OrderController, List<OrderModel>>(
   OrderController.new,
 );
+
+final orderDetailProvider = FutureProvider.autoDispose
+    .family<OrderModel, String>((ref, id) async {
+      final result = await ref.watch(orderRepositoryProvider).getOrder(id);
+      return switch (result) {
+        ApiSuccess(:final data) => data,
+        ApiFailure(:final message) => throw Exception(message),
+      };
+    });

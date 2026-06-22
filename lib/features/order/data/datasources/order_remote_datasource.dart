@@ -8,8 +8,16 @@ class OrderRemoteDatasource {
   const OrderRemoteDatasource(this.dio);
 
   Future<dynamic> fetchOrders() async {
-    final response = await dio.get('/orders');
+    final response = await dio.get(
+      '/orders',
+      queryParameters: {'include': 'items.product'},
+    );
     return response.data;
+  }
+
+  Future<Map<String, dynamic>> fetchOrder(String id) async {
+    final response = await dio.get('/orders/$id');
+    return response.data as Map<String, dynamic>;
   }
 }
 

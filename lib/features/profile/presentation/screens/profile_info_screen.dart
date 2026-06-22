@@ -58,7 +58,16 @@ class _ProfileInfoFormState extends ConsumerState<ProfileInfoForm> {
 
   Future<void> _save() async {
     setState(() => _isSaving = true);
-    await ref.read(profileProvider.notifier).saveName(_nameController.text);
+    try {
+      await ref.read(profileProvider.notifier).saveName(_nameController.text);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        AppSnackBar.error(error.toString().replaceFirst('Exception: ', '')),
+      );
+      return;
+    }
 
     if (!mounted) return;
     setState(() => _isSaving = false);

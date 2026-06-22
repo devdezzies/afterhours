@@ -1,11 +1,14 @@
 import 'package:afterhours/core/widgets/main_shell.dart';
+import 'package:afterhours/core/constants/app_constants.dart';
 import 'package:afterhours/features/auth/presentation/providers/auth_provider.dart';
 import 'package:afterhours/features/auth/presentation/screens/login_screen.dart';
 import 'package:afterhours/features/auth/presentation/screens/register_screen.dart';
 import 'package:afterhours/features/cart/presentation/screens/cart_screen.dart';
 import 'package:afterhours/features/home/presentation/screens/home_screen.dart';
 import 'package:afterhours/features/order/presentation/screens/order_screen.dart';
+import 'package:afterhours/features/order/presentation/screens/order_detail_screen.dart';
 import 'package:afterhours/features/product/presentation/screens/product_detail_screen.dart';
+import 'package:afterhours/features/product/presentation/screens/product_list_screen.dart';
 import 'package:afterhours/features/profile/presentation/screens/profile_address_screen.dart';
 import 'package:afterhours/features/profile/presentation/screens/profile_info_screen.dart';
 import 'package:afterhours/features/profile/presentation/screens/profile_screen.dart';
@@ -25,7 +28,9 @@ abstract class AppRoutes {
   static const String profileInfo = '/profile/info';
   static const String profileAddress = '/profile/address';
   static const String productDetails = '/product/:id';
+  static const String categoryProducts = '/category/:category';
   static const String orders = '/orders';
+  static const String orderDetails = '/orders/:id';
   static const String search = '/search';
 }
 
@@ -35,6 +40,7 @@ const protectedPref = [
   '/cart',
   '/profile',
   '/product',
+  '/category',
   '/orders',
   '/search',
 ];
@@ -133,6 +139,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.orders,
         builder: (context, state) => const OrderScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.categoryProducts,
+        builder: (context, state) => CategoryProductScreen(
+          category: ProductCategory.fromString(
+            state.pathParameters['category']!,
+          ),
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.orderDetails,
+        builder: (context, state) =>
+            OrderDetailScreen(orderId: state.pathParameters['id']!),
       ),
       GoRoute(
         path: AppRoutes.search,

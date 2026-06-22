@@ -1,6 +1,7 @@
 import 'package:afterhours/core/router/app_router.dart';
 import 'package:afterhours/core/theme/app_theme.dart';
 import 'package:afterhours/features/auth/presentation/providers/auth_provider.dart';
+import 'package:afterhours/features/auth/data/repositories/auth_repository.dart';
 import 'package:afterhours/features/profile/presentation/providers/profile_provider.dart';
 import 'package:afterhours/features/profile/presentation/widgets/profile_action_button.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,10 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(height: 20),
               ProfileActionButton(
                 label: 'LOG OUT',
-                onPressed: () => ref.read(authProvider.notifier).logout(),
+                onPressed: () async {
+                  await ref.read(authRepositoryProvider).logout();
+                  await ref.read(authProvider.notifier).logout();
+                },
               ),
             ],
           ),

@@ -31,6 +31,16 @@ Future<ApiResult<T>> runApiCall<T>(Future<T> Function() call) async {
 String parseDioError(DioException e) {
   if (e.response?.data is Map) {
     final data = e.response!.data as Map;
+    final errors = data['errors'];
+    if (errors is Map) {
+      final messages = errors.values
+          .whereType<List>()
+          .expand((values) => values)
+          .map((value) => value.toString())
+          .where((value) => value.isNotEmpty)
+          .toList();
+      if (messages.isNotEmpty) return messages.join('\n');
+    }
     return data['message']?.toString() ?? e.message ?? 'Unknown error';
   }
   switch (e.type) {

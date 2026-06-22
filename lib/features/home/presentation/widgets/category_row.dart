@@ -2,6 +2,8 @@ import 'package:afterhours/features/home/presentation/providers/home_provider.da
 import 'package:afterhours/features/home/presentation/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:afterhours/core/router/app_router.dart';
 import '../../../../core/constants/app_constants.dart';
 
 import '../../../../core/theme/app_theme.dart';
@@ -30,11 +32,12 @@ class CategoryRow extends ConsumerWidget {
               ),
 
               GestureDetector(
-                // onTap: () => Navigator.of(context).push(
-                //   MaterialPageRoute(
-                //     builder: (_) => , // TODO: implement category product list screen
-                //   ),
-                // ),
+                onTap: () => context.push(
+                  AppRoutes.categoryProducts.replaceFirst(
+                    ':category',
+                    category.toApiString(),
+                  ),
+                ),
                 child: const Text('[more]', style: AppTextStyles.sectionMeta),
               ),
             ],

@@ -52,7 +52,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       password: _passwordController.text
     ); 
 
-    if (!mounted) return; 
+    if (!context.mounted) return;
 
     switch (result) {
       case ApiSuccess(:final data): 

@@ -76,15 +76,24 @@ class _ProfileAddressFormState extends ConsumerState<ProfileAddressForm> {
 
   Future<void> _save() async {
     setState(() => _isSaving = true);
-    await ref
-        .read(profileProvider.notifier)
-        .saveAddress(
-          address: _addressController.text,
-          city: _cityController.text,
-          countryRegion: _countryRegionController.text,
-          postcode: _postcodeController.text,
-          phoneNumber: _phoneNumberController.text,
-        );
+    try {
+      await ref
+          .read(profileProvider.notifier)
+          .saveAddress(
+            address: _addressController.text,
+            city: _cityController.text,
+            countryRegion: _countryRegionController.text,
+            postcode: _postcodeController.text,
+            phoneNumber: _phoneNumberController.text,
+          );
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        AppSnackBar.error(error.toString().replaceFirst('Exception: ', '')),
+      );
+      return;
+    }
 
     if (!mounted) return;
     setState(() => _isSaving = false);

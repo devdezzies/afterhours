@@ -1,6 +1,10 @@
 import 'package:afterhours/core/utils/api_result.dart';
-import 'package:afterhours/core/utils/dio_client.dart';
+import 'dart:math';
+
+import 'package:afterhours/features/auth/presentation/providers/auth_provider.dart';
 import 'package:afterhours/features/cart/data/models/cart_item_model.dart';
+import 'package:afterhours/features/cart/data/repositories/checkout_repository.dart';
+import 'package:afterhours/features/profile/data/models/profile_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -39,10 +43,23 @@ class CartState {
 class CartNotifier extends StateNotifier<CartState> {
   final Box<CartItemModel> cartBox;
   final Ref ref; 
+  final String userId;
+  String? _pendingIdempotencyKey;
 
-  CartNotifier(this.ref, this.cartBox) : super(CartState(items: cartBox.values.toList()));
+  CartNotifier(this.ref, this.cartBox, this.userId)
+    : super(CartState(
+        items: cartBox.keys
+            .whereType<String>()
+            .where((key) => key.startsWith('$userId:'))
+            .map((key) => cartBox.get(key))
+            .whereType<CartItemModel>()
+            .toList(),
+      ));
+
+  String _key(String productId) => '$userId:$productId';
 
   void addItem(CartItemModel newItem) {
+    _pendingIdempotencyKey = null;
     final existingIndex = state.items.indexWhere((i) => i.productId == newItem.productId);
 
     if (existingIndex >= 0) {
@@ -55,10 +72,12 @@ class CartNotifier extends StateNotifier<CartState> {
   }
 
   void removeItem(String productId) {
+    _pendingIdempotencyKey = null;
     persist(state.items.where((i) => i.productId != productId).toList()); 
   }
 
   void updateQuantity(String productId, int quantity) {
+    _pendingIdempotencyKey = null;
     if (quantity <= 0) {
       removeItem(productId);
       return;
@@ -68,38 +87,41 @@ class CartNotifier extends StateNotifier<CartState> {
   }
 
   void clearCart() {
-    cartBox.clear(); 
+    _pendingIdempotencyKey = null;
+    cartBox.deleteAll(
+      cartBox.keys
+          .whereType<String>()
+          .where((key) => key.startsWith('$userId:'))
+          .toList(),
+    );
     state = const CartState();
   }
 
   void persist(List<CartItemModel> items) {
-    cartBox.clear();
+    cartBox.deleteAll(
+      cartBox.keys
+          .whereType<String>()
+          .where((key) => key.startsWith('$userId:'))
+          .toList(),
+    );
     for (var item in items) {
-      cartBox.put(item.productId, item);
+      cartBox.put(_key(item.productId), item);
     }
     state = state.copyWith(items: items);
   }
 
-  Future<void> syncWithBackend() async {
-    if (state.isEmpty || state.isSyncing) return;
+  Future<bool> validateWithBackend() async {
+    if (state.isEmpty || state.isSyncing) return false;
 
     state = state.copyWith(isSyncing: true, clearError: true);
 
-    final payload = {
-      'items': state.items.map((i) => i.toSyncPayload()).toList(),
-    }; 
+    final result = await ref.read(checkoutRepositoryProvider).validate(state.items);
 
-    final result = await runApiCall(() async {
-      final dio = ref.read(dioProvider); 
-      final response = await dio.post('/cart/sync', data: payload); 
-      return response.data as Map<String, dynamic>;
-    });
-
-    void applySyncResponse(Map<String, dynamic> data) {
-      final rawItems = data['items'] as List<dynamic>; 
+    void applySyncResponse(CartValidation data) {
+      final rawItems = data.items;
       final syncedMap = {
         for (final e in rawItems) 
-          (e as Map<String, dynamic>)['product_id'] as String: e
+          e['product_id'] as String: e
       };
 
       final updated = state.items 
@@ -109,8 +131,10 @@ class CartNotifier extends StateNotifier<CartState> {
         }) 
         .map((item) {
           final synced = syncedMap[item.productId]!; 
-          item.quantity = synced['quantity'] as int;  
-          return item;
+          return item.copyWith(
+            quantity: synced['quantity'] as int,
+            priceSnapshot: (synced['unit_price'] as num).toDouble(),
+          );
         }).toList();
 
         persist(updated);
@@ -119,14 +143,38 @@ class CartNotifier extends StateNotifier<CartState> {
     switch (result) {
       case ApiSuccess(data: final data):
         applySyncResponse(data);
-        state = state.copyWith(isSyncing: false);
+        state = state.copyWith(
+          isSyncing: false,
+          syncError: data.messages.isEmpty ? null : data.messages.join('\n'),
+          clearError: data.messages.isEmpty,
+        );
+        return true;
       case ApiFailure(message: final message, statusCode: _):
         state = state.copyWith(isSyncing: false, syncError: message);
+        return false;
     }
+  }
+
+  Future<ApiResult<String>> checkout(ProfileModel profile) async {
+    final valid = await validateWithBackend();
+    if (!valid || state.isEmpty) {
+      return ApiFailure(state.syncError ?? 'Cart is empty.');
+    }
+    final random = Random.secure().nextInt(1 << 32);
+    final key = _pendingIdempotencyKey ??=
+        '${DateTime.now().microsecondsSinceEpoch}-$random';
+    final result = await ref.read(checkoutRepositoryProvider).checkout(
+      items: state.items,
+      profile: profile,
+      idempotencyKey: key,
+    );
+    if (result is ApiSuccess<String>) clearCart();
+    return result;
   }
 }
 
 final cartProvider = StateNotifierProvider<CartNotifier, CartState>((ref) {
   final box = Hive.box<CartItemModel>('cartBox');
-  return CartNotifier(ref, box);
+  final userId = ref.watch(currentUserIdProvider) ?? 'guest';
+  return CartNotifier(ref, box, userId);
 });

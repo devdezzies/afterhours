@@ -11,6 +11,7 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final leadItem = order.leadItem;
     final card = Container(
       height: 140,
       decoration: BoxDecoration(
@@ -23,7 +24,7 @@ class OrderCard extends StatelessWidget {
           SizedBox(
             width: 142,
             height: double.infinity,
-            child: OrderProductImage(imageUrl: order.imageUrl),
+            child: OrderProductImage(imageUrl: leadItem?.imageUrl ?? ''),
           ),
           Expanded(
             child: Padding(
@@ -32,13 +33,17 @@ class OrderCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    order.productName.toUpperCase(),
+                    (leadItem?.productName ?? 'ORDER').toUpperCase(),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.right,
                     style: AppTextStyles.sectionLabel.copyWith(fontSize: 18),
                   ),
                   const SizedBox(height: 8),
+                  Text(
+                    '${order.items.length} ITEM${order.items.length == 1 ? '' : 'S'}',
+                    style: AppTextStyles.helperText,
+                  ),
                   Text(
                     '> ${order.status.displayName}',
                     style: AppTextStyles.sectionMeta.copyWith(
@@ -60,11 +65,9 @@ class OrderCard extends StatelessWidget {
       ),
     );
 
-    if (order.productId.isEmpty) return card;
-
     return GestureDetector(
       onTap: () => context.push(
-        AppRoutes.productDetails.replaceFirst(':id', order.productId),
+        AppRoutes.orderDetails.replaceFirst(':id', order.id),
       ),
       child: card,
     );

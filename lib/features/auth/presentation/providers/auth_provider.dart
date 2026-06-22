@@ -1,4 +1,5 @@
 import 'package:afterhours/core/constants/app_constants.dart';
+import 'package:afterhours/core/utils/secure_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,7 +34,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 
   Future<AuthState> readFromStorage() async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(AppConstants.keyAuthToken);
+    final token = await SecureStorage.readToken();
     final userId = prefs.getString(AppConstants.keyUserId);
     final username = prefs.getString(AppConstants.keyUsername);
 
@@ -57,7 +58,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     required String username,
   }) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(AppConstants.keyAuthToken, token);
+    await SecureStorage.writeToken(token);
     await prefs.setString(AppConstants.keyUserId, userId);
     await prefs.setString(AppConstants.keyUsername, username);
 
@@ -84,7 +85,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(AppConstants.keyAuthToken);
+    await SecureStorage.deleteToken();
     await prefs.remove(AppConstants.keyUserId);
     await prefs.remove(AppConstants.keyUsername);
     await prefs.remove(AppConstants.keyDefaultAddress);

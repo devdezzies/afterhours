@@ -80,3 +80,24 @@ flutter test
 ## Notes
 
 - Custom fonts are configured in [pubspec.yaml](pubspec.yaml).
+# AfterHours Mobile
+
+Flutter customer application integrated with the AfterHours Laravel API.
+
+Supply the API URL at build or run time:
+
+```bash
+flutter run --dart-define=BASE_URL=https://your-api.example/api
+```
+
+For the Android emulator, the development default is
+`http://10.0.2.2:8000/api`. Production builds should always supply an HTTPS
+URL. Authentication tokens are stored with `flutter_secure_storage`; profile
+data and the per-user cart are cached locally.
+
+Run verification with:
+
+```bash
+flutter analyze
+flutter test
+```
