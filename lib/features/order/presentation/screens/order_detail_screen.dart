@@ -64,6 +64,7 @@ class _OrderLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: item.imageUrl.isEmpty
             ? const Icon(Icons.inventory_2_outlined)

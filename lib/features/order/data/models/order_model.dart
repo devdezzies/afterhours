@@ -125,7 +125,7 @@ class OrdersResponse {
 String formatIdr(num amount) {
   final value = amount.round().toString();
   return '${AppConstants.currencyPrefix} ${value.replaceAllMapped(
-    RegExp(r'(?=(\d{3})+(?!\d))'),
+    RegExp(r'\B(?=(\d{3})+(?!\d))'),
     (_) => '.',
   )}';
 }

@@ -6,38 +6,31 @@ import 'package:afterhours/features/cart/data/models/cart_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized(); 
+  WidgetsFlutterBinding.ensureInitialized();
 
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp
-  ]);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle( 
-      statusBarColor: Colors.transparent, 
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
-    )
+    ),
   );
 
   await Hive.initFlutter();
   Hive.registerAdapter(CartItemModelAdapter());
   await Hive.openBox<CartItemModel>('cartBox');
-  // register cart adapter 
-  
+  // register cart adapter
+
   final container = ProviderContainer();
   configureDio401Handler(() async {
     await container.read(authProvider.notifier).logout();
   });
 
-  runApp(
-    UncontrolledProviderScope(
-      container: container, 
-      child: const MyApp(),
-    )
-  );
+  runApp(UncontrolledProviderScope(container: container, child: const MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

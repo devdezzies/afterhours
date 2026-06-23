@@ -7,18 +7,18 @@ import 'package:afterhours/features/cart/data/repositories/checkout_repository.d
 import 'package:afterhours/features/profile/data/models/profile_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:hive_ce_flutter/adapters.dart';
 
 class CartState {
-  final List<CartItemModel> items; 
+  final List<CartItemModel> items;
   final bool isSyncing;
-  final String? syncError; 
+  final String? syncError;
 
   const CartState({
-    this.items = const [], 
-    this.isSyncing = false, 
-    this.syncError
-  }); 
+    this.items = const [],
+    this.isSyncing = false,
+    this.syncError,
+  });
 
   double get subtotal => items.fold(0, (sum, item) => sum + item.lineTotal);
 
@@ -27,44 +27,51 @@ class CartState {
   bool get isEmpty => items.isEmpty;
 
   CartState copyWith({
-    List<CartItemModel>? items, 
-    bool? isSyncing, 
-    String? syncError, 
-    bool clearError = false
+    List<CartItemModel>? items,
+    bool? isSyncing,
+    String? syncError,
+    bool clearError = false,
   }) {
     return CartState(
-      items: items ?? this.items, 
-      isSyncing: isSyncing ?? this.isSyncing, 
-      syncError: clearError ? null : (syncError ?? this.syncError)
+      items: items ?? this.items,
+      isSyncing: isSyncing ?? this.isSyncing,
+      syncError: clearError ? null : (syncError ?? this.syncError),
     );
   }
 }
 
 class CartNotifier extends StateNotifier<CartState> {
   final Box<CartItemModel> cartBox;
-  final Ref ref; 
+  final Ref ref;
   final String userId;
   String? _pendingIdempotencyKey;
 
   CartNotifier(this.ref, this.cartBox, this.userId)
-    : super(CartState(
-        items: cartBox.keys
-            .whereType<String>()
-            .where((key) => key.startsWith('$userId:'))
-            .map((key) => cartBox.get(key))
-            .whereType<CartItemModel>()
-            .toList(),
-      ));
+    : super(
+        CartState(
+          items: cartBox.keys
+              .whereType<String>()
+              .where((key) => key.startsWith('$userId:'))
+              .map((key) => cartBox.get(key))
+              .whereType<CartItemModel>()
+              .where((item) => item.productId.isNotEmpty)
+              .toList(),
+        ),
+      );
 
   String _key(String productId) => '$userId:$productId';
 
   void addItem(CartItemModel newItem) {
     _pendingIdempotencyKey = null;
-    final existingIndex = state.items.indexWhere((i) => i.productId == newItem.productId);
+    final existingIndex = state.items.indexWhere(
+      (i) => i.productId == newItem.productId,
+    );
 
     if (existingIndex >= 0) {
       final updated = List<CartItemModel>.from(state.items);
-      updated[existingIndex] = updated[existingIndex].copyWith(quantity: updated[existingIndex].quantity + newItem.quantity);
+      updated[existingIndex] = updated[existingIndex].copyWith(
+        quantity: updated[existingIndex].quantity + newItem.quantity,
+      );
       persist(updated);
     } else {
       persist([...state.items, newItem]);
@@ -73,7 +80,7 @@ class CartNotifier extends StateNotifier<CartState> {
 
   void removeItem(String productId) {
     _pendingIdempotencyKey = null;
-    persist(state.items.where((i) => i.productId != productId).toList()); 
+    persist(state.items.where((i) => i.productId != productId).toList());
   }
 
   void updateQuantity(String productId, int quantity) {
@@ -82,7 +89,11 @@ class CartNotifier extends StateNotifier<CartState> {
       removeItem(productId);
       return;
     }
-    final updated = state.items.map((i) => i.productId == productId ? i.copyWith(quantity: quantity) : i).toList();
+    final updated = state.items
+        .map(
+          (i) => i.productId == productId ? i.copyWith(quantity: quantity) : i,
+        )
+        .toList();
     persist(updated);
   }
 
@@ -115,29 +126,31 @@ class CartNotifier extends StateNotifier<CartState> {
 
     state = state.copyWith(isSyncing: true, clearError: true);
 
-    final result = await ref.read(checkoutRepositoryProvider).validate(state.items);
+    final result = await ref
+        .read(checkoutRepositoryProvider)
+        .validate(state.items);
 
     void applySyncResponse(CartValidation data) {
       final rawItems = data.items;
       final syncedMap = {
-        for (final e in rawItems) 
-          e['product_id'] as String: e
+        for (final e in rawItems) e['product_id'] as String: e,
       };
 
-      final updated = state.items 
-        .where((item) {
-          final synced = syncedMap[item.productId];
-          return synced != null && synced['quantity'] > 0;
-        }) 
-        .map((item) {
-          final synced = syncedMap[item.productId]!; 
-          return item.copyWith(
-            quantity: synced['quantity'] as int,
-            priceSnapshot: (synced['unit_price'] as num).toDouble(),
-          );
-        }).toList();
+      final updated = state.items
+          .where((item) {
+            final synced = syncedMap[item.productId];
+            return synced != null && synced['quantity'] > 0;
+          })
+          .map((item) {
+            final synced = syncedMap[item.productId]!;
+            return item.copyWith(
+              quantity: synced['quantity'] as int,
+              priceSnapshot: (synced['unit_price'] as num).toDouble(),
+            );
+          })
+          .toList();
 
-        persist(updated);
+      persist(updated);
     }
 
     switch (result) {
@@ -163,11 +176,9 @@ class CartNotifier extends StateNotifier<CartState> {
     final random = Random.secure().nextInt(1 << 32);
     final key = _pendingIdempotencyKey ??=
         '${DateTime.now().microsecondsSinceEpoch}-$random';
-    final result = await ref.read(checkoutRepositoryProvider).checkout(
-      items: state.items,
-      profile: profile,
-      idempotencyKey: key,
-    );
+    final result = await ref
+        .read(checkoutRepositoryProvider)
+        .checkout(items: state.items, profile: profile, idempotencyKey: key);
     if (result is ApiSuccess<String>) clearCart();
     return result;
   }

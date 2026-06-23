@@ -24,7 +24,7 @@ class OrderCard extends StatelessWidget {
           SizedBox(
             width: 142,
             height: double.infinity,
-            child: OrderProductImage(imageUrl: leadItem?.imageUrl ?? ''),
+            child: OrderProductImageGrid(items: order.items),
           ),
           Expanded(
             child: Padding(
@@ -34,7 +34,7 @@ class OrderCard extends StatelessWidget {
                 children: [
                   Text(
                     (leadItem?.productName ?? 'ORDER').toUpperCase(),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.right,
                     style: AppTextStyles.sectionLabel.copyWith(fontSize: 18),
@@ -66,10 +66,108 @@ class OrderCard extends StatelessWidget {
     );
 
     return GestureDetector(
-      onTap: () => context.push(
-        AppRoutes.orderDetails.replaceFirst(':id', order.id),
-      ),
+      onTap: () =>
+          context.push(AppRoutes.orderDetails.replaceFirst(':id', order.id)),
       child: card,
+    );
+  }
+}
+
+class OrderProductImageGrid extends StatelessWidget {
+  final List<OrderItemModel> items;
+
+  const OrderProductImageGrid({super.key, required this.items});
+
+  @override
+  Widget build(BuildContext context) {
+    final previewItems = items.take(4).toList(growable: false);
+
+    if (previewItems.isEmpty) return const OrderImagePlaceholder();
+    if (previewItems.length == 1) {
+      return OrderProductImage(imageUrl: previewItems.first.imageUrl);
+    }
+
+    const gap = 2.0;
+
+    return ColoredBox(
+      color: AppColors.surface,
+      child: switch (previewItems.length) {
+        2 => Row(
+          children: [
+            Expanded(
+              child: OrderProductImage(imageUrl: previewItems[0].imageUrl),
+            ),
+            const SizedBox(width: gap),
+            Expanded(
+              child: OrderProductImage(imageUrl: previewItems[1].imageUrl),
+            ),
+          ],
+        ),
+        3 => Row(
+          children: [
+            Expanded(
+              child: OrderProductImage(imageUrl: previewItems[0].imageUrl),
+            ),
+            const SizedBox(width: gap),
+            Expanded(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: OrderProductImage(
+                      imageUrl: previewItems[1].imageUrl,
+                    ),
+                  ),
+                  const SizedBox(height: gap),
+                  Expanded(
+                    child: OrderProductImage(
+                      imageUrl: previewItems[2].imageUrl,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        _ => Column(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OrderProductImage(
+                      imageUrl: previewItems[0].imageUrl,
+                    ),
+                  ),
+                  const SizedBox(width: gap),
+                  Expanded(
+                    child: OrderProductImage(
+                      imageUrl: previewItems[1].imageUrl,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: gap),
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OrderProductImage(
+                      imageUrl: previewItems[2].imageUrl,
+                    ),
+                  ),
+                  const SizedBox(width: gap),
+                  Expanded(
+                    child: OrderProductImage(
+                      imageUrl: previewItems[3].imageUrl,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      },
     );
   }
 }
@@ -83,10 +181,15 @@ class OrderProductImage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (imageUrl.isEmpty) return const OrderImagePlaceholder();
 
-    return Image.network(
-      imageUrl,
-      fit: BoxFit.cover,
-      errorBuilder: (_, _, _) => const OrderImagePlaceholder(),
+    return SizedBox.expand(
+      child: Image.network(
+        imageUrl,
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover,
+        alignment: Alignment.center,
+        errorBuilder: (_, _, _) => const OrderImagePlaceholder(),
+      ),
     );
   }
 }

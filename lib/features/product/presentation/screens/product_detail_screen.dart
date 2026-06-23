@@ -5,6 +5,7 @@ import 'package:afterhours/features/cart/data/models/cart_item_model.dart';
 import 'package:afterhours/features/cart/presentation/providers/cart_provider.dart';
 import 'package:afterhours/features/product/data/models/product_model.dart';
 import 'package:afterhours/features/product/presentation/providers/product_detail_provider.dart';
+import 'package:afterhours/features/product/presentation/widgets/product_add_to_cart_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -187,69 +188,11 @@ class ProductInfoPanel extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 20),
-          ProductAddToCartButton(
+          ProductAddToCartSlider(
             price: product.formattedPrice,
-            onPressed: onAddToCart,
+            onAddToCart: onAddToCart,
           ),
         ],
-      ),
-    );
-  }
-}
-
-class ProductAddToCartButton extends StatelessWidget {
-  final String price;
-  final VoidCallback? onPressed;
-
-  const ProductAddToCartButton({
-    super.key,
-    required this.price,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final color = onPressed == null ? AppColors.textMuted : AppColors.yellow;
-
-    return SizedBox(
-      height: 50,
-      width: double.infinity,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: color,
-          side: BorderSide(color: color, width: 1.2),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-              child: const Icon(
-                Icons.apps_rounded,
-                color: AppColors.black,
-                size: 20,
-              ),
-            ),
-            Expanded(
-              child: Text(
-                onPressed == null ? 'OUT OF STOCK' : '$price + ADD TO CART',
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.buttonSecondary.copyWith(
-                  color: color,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-          ],
-        ),
       ),
     );
   }

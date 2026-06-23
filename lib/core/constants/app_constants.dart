@@ -1,7 +1,7 @@
 abstract class AppConstants {
   static const String baseUrl = String.fromEnvironment(
     'BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000/api',
+    defaultValue: 'https://afterhours-backend-u5ha.onrender.com/api',
   );
   static const String currencyPrefix = 'RP';
 
