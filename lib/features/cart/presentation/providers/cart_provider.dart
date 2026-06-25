@@ -178,7 +178,7 @@ class CartNotifier extends StateNotifier<CartState> {
     final result = await ref
         .read(checkoutRepositoryProvider)
         .checkout(items: state.items, profile: profile, idempotencyKey: key);
-    if (result is ApiSuccess<String>) clearCart();
+    if (result is ApiSuccess<CheckoutResult>) clearCart();
     return result;
   }
 }
