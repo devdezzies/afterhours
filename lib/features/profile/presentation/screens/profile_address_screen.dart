@@ -6,8 +6,10 @@ import 'package:afterhours/features/profile/presentation/widgets/profile_action_
 import 'package:afterhours/features/profile/presentation/widgets/profile_back_button.dart';
 import 'package:afterhours/features/profile/presentation/widgets/profile_input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:latlong2/latlong.dart';
 
 class ProfileAddressScreen extends ConsumerWidget {
   const ProfileAddressScreen({super.key});
@@ -48,6 +50,7 @@ class _ProfileAddressFormState extends ConsumerState<ProfileAddressForm> {
   late final TextEditingController _countryRegionController;
   late final TextEditingController _postcodeController;
   late final TextEditingController _phoneNumberController;
+  LatLng? _selectedPoint;
   bool _isSaving = false;
 
   @override
@@ -62,6 +65,12 @@ class _ProfileAddressFormState extends ConsumerState<ProfileAddressForm> {
     _phoneNumberController = TextEditingController(
       text: widget.profile.phoneNumber,
     );
+    if (widget.profile.latitude != null && widget.profile.longitude != null) {
+      _selectedPoint = LatLng(
+        widget.profile.latitude!,
+        widget.profile.longitude!,
+      );
+    }
   }
 
   @override
@@ -85,6 +94,8 @@ class _ProfileAddressFormState extends ConsumerState<ProfileAddressForm> {
             countryRegion: _countryRegionController.text,
             postcode: _postcodeController.text,
             phoneNumber: _phoneNumberController.text,
+            latitude: _selectedPoint?.latitude,
+            longitude: _selectedPoint?.longitude,
           );
     } catch (error) {
       if (!mounted) return;
@@ -154,6 +165,13 @@ class _ProfileAddressFormState extends ConsumerState<ProfileAddressForm> {
                           label: 'PHONE NUMBER',
                           keyboardType: TextInputType.phone,
                         ),
+                        const SizedBox(height: 24),
+                        AddressMapPicker(
+                          selectedPoint: _selectedPoint,
+                          onChanged: (point) {
+                            setState(() => _selectedPoint = point);
+                          },
+                        ),
                         const SizedBox(height: 90),
                         ProfileActionButton(
                           label: _isSaving ? 'SAVING' : 'SAVE',
@@ -179,6 +197,83 @@ class _ProfileAddressFormState extends ConsumerState<ProfileAddressForm> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class AddressMapPicker extends StatelessWidget {
+  static const LatLng fallbackCenter = LatLng(-6.2088, 106.8456);
+
+  final LatLng? selectedPoint;
+  final ValueChanged<LatLng> onChanged;
+
+  const AddressMapPicker({
+    super.key,
+    required this.selectedPoint,
+    required this.onChanged,
+  });
+
+  String get _coordinateText {
+    final point = selectedPoint;
+    if (point == null) return 'NO PIN SELECTED';
+
+    return '${point.latitude.toStringAsFixed(6)}, '
+        '${point.longitude.toStringAsFixed(6)}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final center = selectedPoint ?? fallbackCenter;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text('MAP PIN', style: AppTextStyles.fieldLabel),
+        ),
+        const SizedBox(height: 10),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadius.card),
+          child: SizedBox(
+            height: 220,
+            width: double.infinity,
+            child: FlutterMap(
+              options: MapOptions(
+                initialCenter: center,
+                initialZoom: selectedPoint == null ? 11 : 15,
+                onTap: (_, point) => onChanged(point),
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.example.afterhours',
+                ),
+                if (selectedPoint != null)
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: selectedPoint!,
+                        width: 44,
+                        height: 44,
+                        child: const Icon(
+                          Icons.location_on,
+                          color: AppColors.red,
+                          size: 42,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          _coordinateText,
+          style: AppTextStyles.helperText.copyWith(color: AppColors.textMuted),
+        ),
+      ],
     );
   }
 }

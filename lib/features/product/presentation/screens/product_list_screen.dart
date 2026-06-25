@@ -1,6 +1,6 @@
-import 'package:afterhours/core/constants/app_constants.dart';
 import 'package:afterhours/core/theme/app_theme.dart';
 import 'package:afterhours/core/utils/api_result.dart';
+import 'package:afterhours/features/home/presentation/providers/home_provider.dart';
 import 'package:afterhours/features/home/presentation/widgets/product_card.dart';
 import 'package:afterhours/features/product/data/models/product_model.dart';
 import 'package:afterhours/features/product/repositories/product_repository.dart';
@@ -8,18 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CategoryProductScreen extends StatelessWidget {
-  final ProductCategory category;
+  final String category;
   const CategoryProductScreen({super.key, required this.category});
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(category.displayName)),
+    appBar: AppBar(title: Text(formatCategoryLabel(category))),
     body: PagedProductGrid(category: category),
   );
 }
 
 class PagedProductGrid extends ConsumerStatefulWidget {
-  final ProductCategory? category;
+  final String? category;
   final String query;
   const PagedProductGrid({super.key, this.category, this.query = ''});
 
@@ -69,13 +69,15 @@ class _PagedProductGridState extends ConsumerState<PagedProductGrid> {
       _loading = true;
       _error = null;
     });
-    final result = await ref.read(productRepositoryProvider).getProducts(
-      page: _page,
-      category: widget.category,
-      keywords: widget.query.trim().isEmpty
-          ? null
-          : widget.query.trim().split(RegExp(r'\s+')),
-    );
+    final result = await ref
+        .read(productRepositoryProvider)
+        .getProducts(
+          page: _page,
+          category: widget.category,
+          keywords: widget.query.trim().isEmpty
+              ? null
+              : widget.query.trim().split(RegExp(r'\s+')),
+        );
     if (!mounted) return;
     switch (result) {
       case ApiSuccess(:final data):

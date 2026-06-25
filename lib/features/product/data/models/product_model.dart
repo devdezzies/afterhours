@@ -1,12 +1,10 @@
-import 'package:afterhours/core/constants/app_constants.dart';
-
 class ProductModel {
   final String id;
   final String name;
   final String description;
   final double price;
   final int stock;
-  final ProductCategory category;
+  final String category;
   final String imageUrl;
 
   const ProductModel({
@@ -21,13 +19,13 @@ class ProductModel {
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String,
-      price: (json['price'] as num).toDouble(),
-      stock: json['stock'] as int,
-      category: ProductCategory.fromString(json['category'] as String),
-      imageUrl: json['image_url'] as String,
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      price: (json['price'] as num?)?.toDouble() ?? 0,
+      stock: (json['stock'] as num?)?.toInt() ?? 0,
+      category: json['category']?.toString() ?? '',
+      imageUrl: json['image_url']?.toString() ?? '',
     );
   }
 
@@ -38,7 +36,7 @@ class ProductModel {
       'description': description,
       'price': price,
       'stock': stock,
-      'category': category.toApiString(),
+      'category': category,
       'image_url': imageUrl,
     };
   }
@@ -49,7 +47,7 @@ class ProductModel {
     String? description,
     double? price,
     int? stock,
-    ProductCategory? category,
+    String? category,
     String? imageUrl,
   }) {
     return ProductModel(

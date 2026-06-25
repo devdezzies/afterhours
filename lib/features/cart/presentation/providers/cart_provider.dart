@@ -131,21 +131,20 @@ class CartNotifier extends StateNotifier<CartState> {
         .validate(state.items);
 
     void applySyncResponse(CartValidation data) {
-      final rawItems = data.items;
       final syncedMap = {
-        for (final e in rawItems) e['product_id'] as String: e,
+        for (final item in data.items) item.productId: item,
       };
 
       final updated = state.items
           .where((item) {
             final synced = syncedMap[item.productId];
-            return synced != null && synced['quantity'] > 0;
+            return synced != null && synced.quantity > 0;
           })
           .map((item) {
             final synced = syncedMap[item.productId]!;
             return item.copyWith(
-              quantity: synced['quantity'] as int,
-              priceSnapshot: (synced['unit_price'] as num).toDouble(),
+              quantity: synced.quantity,
+              priceSnapshot: synced.unitPrice.toDouble(),
             );
           })
           .toList();
@@ -168,7 +167,7 @@ class CartNotifier extends StateNotifier<CartState> {
     }
   }
 
-  Future<ApiResult<String>> checkout(ProfileModel profile) async {
+  Future<ApiResult<CheckoutResult>> checkout(ProfileModel profile) async {
     final valid = await validateWithBackend();
     if (!valid || state.isEmpty) {
       return ApiFailure(state.syncError ?? 'Cart is empty.');

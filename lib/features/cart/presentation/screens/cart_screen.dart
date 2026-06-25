@@ -1,7 +1,7 @@
-import 'package:afterhours/core/constants/app_constants.dart';
 import 'package:afterhours/core/router/app_router.dart';
 import 'package:afterhours/core/theme/app_theme.dart';
 import 'package:afterhours/core/utils/api_result.dart';
+import 'package:afterhours/core/utils/currency_formatter.dart';
 import 'package:afterhours/features/cart/data/models/cart_item_model.dart';
 import 'package:afterhours/features/cart/presentation/providers/cart_provider.dart';
 import 'package:afterhours/features/order/presentation/providers/order_provider.dart';
@@ -19,14 +19,6 @@ class CartScreen extends ConsumerStatefulWidget {
 
 class _CartScreenState extends ConsumerState<CartScreen> {
   bool _checkingOut = false;
-
-  String _money(num value) {
-    final digits = value.round().toString();
-    return '${AppConstants.currencyPrefix} ${digits.replaceAllMapped(
-      RegExp(r'(?=(\d{3})+(?!\d))'),
-      (_) => '.',
-    )}';
-  }
 
   Future<void> _checkout() async {
     final profile = ref.read(profileProvider).value;
@@ -51,14 +43,12 @@ class _CartScreenState extends ConsumerState<CartScreen> {
     switch (result) {
       case ApiSuccess():
         ref.invalidate(orderProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.info('Order created successfully.'),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(AppSnackBar.info('Order created successfully.'));
         context.push(AppRoutes.orders);
       case ApiFailure(:final message):
-        ScaffoldMessenger.of(context).showSnackBar(
-          AppSnackBar.error(message),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(AppSnackBar.error(message));
     }
   }
 
@@ -98,7 +88,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                     separatorBuilder: (_, _) => const SizedBox(height: 12),
                     itemBuilder: (context, index) => _CartItemCard(
                       item: cart.items[index],
-                      price: _money(cart.items[index].lineTotal),
+                      price: formatIdr(cart.items[index].lineTotal),
                     ),
                   ),
                 ),
@@ -113,7 +103,7 @@ class _CartScreenState extends ConsumerState<CartScreen> {
                           children: [
                             Text('SUBTOTAL', style: AppTextStyles.sectionLabel),
                             Text(
-                              _money(cart.subtotal),
+                              formatIdr(cart.subtotal),
                               style: AppTextStyles.price,
                             ),
                           ],
@@ -206,7 +196,10 @@ class _CartItemCard extends ConsumerWidget {
                       onPressed: () => ref
                           .read(cartProvider.notifier)
                           .removeItem(item.productId),
-                      icon: const Icon(Icons.delete_outline, color: AppColors.red),
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: AppColors.red,
+                      ),
                     ),
                   ],
                 ),

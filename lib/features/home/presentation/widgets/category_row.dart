@@ -4,12 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:afterhours/core/router/app_router.dart';
-import '../../../../core/constants/app_constants.dart';
 
 import '../../../../core/theme/app_theme.dart';
 
 class CategoryRow extends ConsumerWidget {
-  final ProductCategory category;
+  final String category;
 
   const CategoryRow({super.key, required this.category});
 
@@ -27,7 +26,7 @@ class CategoryRow extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                '> ${category.displayName}',
+                '> ${formatCategoryLabel(category)}',
                 style: AppTextStyles.sectionLabel,
               ),
 
@@ -35,7 +34,7 @@ class CategoryRow extends ConsumerWidget {
                 onTap: () => context.push(
                   AppRoutes.categoryProducts.replaceFirst(
                     ':category',
-                    category.toApiString(),
+                    Uri.encodeComponent(category),
                   ),
                 ),
                 child: const Text('[more]', style: AppTextStyles.sectionMeta),
@@ -69,7 +68,6 @@ class CategoryRow extends ConsumerWidget {
     );
   }
 }
-
 
 class _SkeletonRow extends StatelessWidget {
   @override

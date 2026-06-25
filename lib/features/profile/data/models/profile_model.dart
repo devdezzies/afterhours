@@ -6,6 +6,8 @@ class ProfileModel {
   final String countryRegion;
   final String postcode;
   final String phoneNumber;
+  final double? latitude;
+  final double? longitude;
 
   const ProfileModel({
     required this.name,
@@ -15,6 +17,8 @@ class ProfileModel {
     required this.countryRegion,
     required this.postcode,
     required this.phoneNumber,
+    this.latitude,
+    this.longitude,
   });
 
   const ProfileModel.empty()
@@ -24,7 +28,9 @@ class ProfileModel {
       city = '',
       countryRegion = '',
       postcode = '',
-      phoneNumber = '';
+      phoneNumber = '',
+      latitude = null,
+      longitude = null;
 
   ProfileModel copyWith({
     String? name,
@@ -34,6 +40,10 @@ class ProfileModel {
     String? countryRegion,
     String? postcode,
     String? phoneNumber,
+    double? latitude,
+    double? longitude,
+    bool clearLatitude = false,
+    bool clearLongitude = false,
   }) {
     return ProfileModel(
       name: name ?? this.name,
@@ -43,6 +53,8 @@ class ProfileModel {
       countryRegion: countryRegion ?? this.countryRegion,
       postcode: postcode ?? this.postcode,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      latitude: clearLatitude ? null : latitude ?? this.latitude,
+      longitude: clearLongitude ? null : longitude ?? this.longitude,
     );
   }
 
@@ -58,6 +70,8 @@ class ProfileModel {
       countryRegion: address['country_region']?.toString() ?? '',
       postcode: address['postcode']?.toString() ?? '',
       phoneNumber: json['phone_number']?.toString() ?? '',
+      latitude: (address['latitude'] as num?)?.toDouble(),
+      longitude: (address['longitude'] as num?)?.toDouble(),
     );
   }
 
@@ -76,8 +90,8 @@ class ProfileModel {
           'city': city,
           'country_region': countryRegion,
           'postcode': postcode,
-          'latitude': null,
-          'longitude': null,
+          'latitude': latitude,
+          'longitude': longitude,
         },
     };
   }

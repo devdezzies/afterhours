@@ -1,4 +1,5 @@
 import 'package:afterhours/core/constants/app_constants.dart';
+import 'package:afterhours/features/cart/data/repositories/checkout_repository.dart';
 import 'package:afterhours/features/order/data/models/order_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -58,5 +59,52 @@ void main() {
     ]) {
       expect(OrderStatus.fromString(status).name, status);
     }
+  });
+
+  test('parses flattened order list shipping fields from backend', () {
+    final order = OrderModel.fromJson({
+      'id': 'order-2',
+      'status': 'pending',
+      'total_amount': 1500000,
+      'shipping_address': 'Jalan Dua',
+      'shipping_city': 'Bandung',
+      'shipping_country_region': 'Indonesia',
+      'shipping_postcode': '40111',
+      'shipping_phone_number': '0813',
+      'shipping_lat': -6.9,
+      'shipping_lng': 107.6,
+      'items': const [],
+    });
+
+    expect(order.shippingAddress.address, 'Jalan Dua');
+    expect(order.shippingAddress.city, 'Bandung');
+    expect(order.shippingAddress.phoneNumber, '0813');
+    expect(order.shippingAddress.latitude, -6.9);
+    expect(order.shippingAddress.longitude, 107.6);
+  });
+
+  test('parses checkout response metadata and nested order detail', () {
+    final result = CheckoutResult.fromJson({
+      'idempotent_replay': true,
+      'data': {
+        'id': 'order-3',
+        'status': 'pending',
+        'total_amount': 500000,
+        'shipping_address': {
+          'address': 'Jalan Tiga',
+          'city': 'Jakarta',
+          'country_region': 'Indonesia',
+          'postcode': '12345',
+          'phone_number': '0812',
+          'latitude': null,
+          'longitude': null,
+        },
+        'items': const [],
+      },
+    });
+
+    expect(result.idempotentReplay, isTrue);
+    expect(result.order.id, 'order-3');
+    expect(result.order.shippingAddress.city, 'Jakarta');
   });
 }

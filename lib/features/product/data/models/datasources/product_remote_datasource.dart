@@ -9,14 +9,15 @@ class ProductRemoteDatasource {
 
   Future<Map<String, dynamic>> fetchProducts({
     int page = 1,
-    ProductCategory? category,
+    int? perPage,
+    String? category,
     double? maxPrice,
     List<String>? keywords,
   }) async {
     final queryParams = {
       'page': page,
-      'per_page': AppConstants.pageSize,
-      if (category != null) 'category': category.toApiString(),
+      'per_page': perPage ?? AppConstants.pageSize,
+      if (category != null && category.isNotEmpty) 'category': category,
       'max_price': ?maxPrice,
       if (keywords != null && keywords.isNotEmpty)
         'keywords': keywords.join(','),

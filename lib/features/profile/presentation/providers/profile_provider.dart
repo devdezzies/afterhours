@@ -32,6 +32,8 @@ class ProfileController extends AsyncNotifier<ProfileModel> {
           prefs.getString(AppConstants.keyAddressCountryRegion) ?? '',
       postcode: prefs.getString(AppConstants.keyAddressPostcode) ?? '',
       phoneNumber: prefs.getString(AppConstants.keyAddressPhoneNumber) ?? '',
+      latitude: prefs.getDouble(AppConstants.keyDefaultLat),
+      longitude: prefs.getDouble(AppConstants.keyDefaultLng),
     );
   }
 
@@ -49,6 +51,8 @@ class ProfileController extends AsyncNotifier<ProfileModel> {
     required String countryRegion,
     required String postcode,
     required String phoneNumber,
+    double? latitude,
+    double? longitude,
   }) async {
     final next = (state.value ?? const ProfileModel.empty()).copyWith(
       address: address.trim(),
@@ -56,13 +60,19 @@ class ProfileController extends AsyncNotifier<ProfileModel> {
       countryRegion: countryRegion.trim(),
       postcode: postcode.trim(),
       phoneNumber: phoneNumber.trim(),
+      latitude: latitude,
+      longitude: longitude,
+      clearLatitude: latitude == null,
+      clearLongitude: longitude == null,
     );
 
     await _saveRemote(next);
   }
 
   Future<void> _saveRemote(ProfileModel next) async {
-    final result = await ref.read(profileRepositoryProvider).updateProfile(next);
+    final result = await ref
+        .read(profileRepositoryProvider)
+        .updateProfile(next);
     switch (result) {
       case ApiSuccess(:final data):
         await _cache(data);
@@ -87,6 +97,16 @@ class ProfileController extends AsyncNotifier<ProfileModel> {
       AppConstants.keyAddressPhoneNumber,
       profile.phoneNumber,
     );
+    if (profile.latitude == null) {
+      await prefs.remove(AppConstants.keyDefaultLat);
+    } else {
+      await prefs.setDouble(AppConstants.keyDefaultLat, profile.latitude!);
+    }
+    if (profile.longitude == null) {
+      await prefs.remove(AppConstants.keyDefaultLng);
+    } else {
+      await prefs.setDouble(AppConstants.keyDefaultLng, profile.longitude!);
+    }
   }
 }
 

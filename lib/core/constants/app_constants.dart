@@ -23,62 +23,8 @@ abstract class AppConstants {
   static const String keyAddressPhoneNumber = 'profile_address_phone_number';
 
   static const int pageSize = 20;
+  static const int backendMaxPageSize = 50;
   static const int cartItemTypeId = 0;
-}
-
-enum ProductCategory {
-  peripherals,
-  furniture,
-  deskAccessories,
-  audio,
-  eyewear;
-
-  String toApiString() {
-    switch (this) {
-      case ProductCategory.peripherals:
-        return 'peripherals';
-      case ProductCategory.furniture:
-        return 'furniture';
-      case ProductCategory.deskAccessories:
-        return 'desk_accessories';
-      case ProductCategory.audio:
-        return 'audio';
-      case ProductCategory.eyewear:
-        return 'eyewear';
-    }
-  }
-
-  static ProductCategory fromString(String value) {
-    switch (value) {
-      case 'peripherals':
-        return ProductCategory.peripherals;
-      case 'furniture':
-        return ProductCategory.furniture;
-      case 'desk_accessories':
-        return ProductCategory.deskAccessories;
-      case 'audio':
-        return ProductCategory.audio;
-      case 'eyewear':
-        return ProductCategory.eyewear;
-      default:
-        throw ArgumentError('Unknown category: $value');
-    }
-  }
-
-  String get displayName {
-    switch (this) {
-      case ProductCategory.peripherals:
-        return 'PERIPHERALS';
-      case ProductCategory.furniture:
-        return 'FURNITURE';
-      case ProductCategory.deskAccessories:
-        return 'DESK ACC.';
-      case ProductCategory.audio:
-        return 'AUDIO';
-      case ProductCategory.eyewear:
-        return 'EYEWEAR';
-    }
-  }
 }
 
 enum OrderStatus {

@@ -1,5 +1,4 @@
 import 'package:afterhours/core/widgets/main_shell.dart';
-import 'package:afterhours/core/constants/app_constants.dart';
 import 'package:afterhours/features/auth/presentation/providers/auth_provider.dart';
 import 'package:afterhours/features/auth/presentation/screens/login_screen.dart';
 import 'package:afterhours/features/auth/presentation/screens/register_screen.dart';
@@ -143,9 +142,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.categoryProducts,
         builder: (context, state) => CategoryProductScreen(
-          category: ProductCategory.fromString(
-            state.pathParameters['category']!,
-          ),
+          category: Uri.decodeComponent(state.pathParameters['category']!),
         ),
       ),
       GoRoute(

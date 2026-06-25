@@ -1,6 +1,6 @@
-import 'package:afterhours/core/constants/app_constants.dart';
 import 'package:afterhours/core/router/app_router.dart';
 import 'package:afterhours/core/theme/app_theme.dart';
+import 'package:afterhours/core/utils/currency_formatter.dart';
 import 'package:afterhours/features/cart/data/models/cart_item_model.dart';
 import 'package:afterhours/features/cart/presentation/providers/cart_provider.dart';
 import 'package:afterhours/features/product/data/models/product_model.dart';
@@ -55,7 +55,7 @@ class _ProductOverviewState extends ConsumerState<ProductOverview> {
             priceSnapshot: product.price,
             quantity: 1,
             imageUrl: product.imageUrl,
-            category: product.category.toApiString(),
+            category: product.category,
           ),
         );
 
@@ -270,18 +270,5 @@ class ProductDetailError extends StatelessWidget {
 }
 
 extension ProductPriceFormatter on ProductModel {
-  String get formattedPrice {
-    final value = price.round().toString();
-    final buffer = StringBuffer();
-
-    for (var i = 0; i < value.length; i++) {
-      final position = value.length - i;
-      buffer.write(value[i]);
-      if (position > 1 && position % 3 == 1) {
-        buffer.write('.');
-      }
-    }
-
-    return '${AppConstants.currencyPrefix} ${buffer.toString()}';
-  }
+  String get formattedPrice => formatIdr(price);
 }

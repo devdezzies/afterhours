@@ -1,5 +1,6 @@
 import 'package:afterhours/core/constants/app_constants.dart';
 import 'package:afterhours/core/theme/app_theme.dart';
+import 'package:afterhours/core/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 
 class OrderItemModel {
@@ -43,6 +44,8 @@ class ShippingAddressModel {
   final String countryRegion;
   final String postcode;
   final String phoneNumber;
+  final double? latitude;
+  final double? longitude;
 
   const ShippingAddressModel({
     this.address = '',
@@ -50,6 +53,8 @@ class ShippingAddressModel {
     this.countryRegion = '',
     this.postcode = '',
     this.phoneNumber = '',
+    this.latitude,
+    this.longitude,
   });
 
   factory ShippingAddressModel.fromJson(dynamic json) {
@@ -61,6 +66,25 @@ class ShippingAddressModel {
       countryRegion: json['country_region']?.toString() ?? '',
       postcode: json['postcode']?.toString() ?? '',
       phoneNumber: json['phone_number']?.toString() ?? '',
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
+    );
+  }
+
+  factory ShippingAddressModel.fromOrderJson(Map<String, dynamic> json) {
+    final nested = json['shipping_address'];
+    if (nested is Map<String, dynamic>) {
+      return ShippingAddressModel.fromJson(nested);
+    }
+
+    return ShippingAddressModel(
+      address: nested?.toString() ?? '',
+      city: json['shipping_city']?.toString() ?? '',
+      countryRegion: json['shipping_country_region']?.toString() ?? '',
+      postcode: json['shipping_postcode']?.toString() ?? '',
+      phoneNumber: json['shipping_phone_number']?.toString() ?? '',
+      latitude: (json['shipping_lat'] as num?)?.toDouble(),
+      longitude: (json['shipping_lng'] as num?)?.toDouble(),
     );
   }
 }
@@ -96,7 +120,7 @@ class OrderModel {
           .whereType<Map<String, dynamic>>()
           .map(OrderItemModel.fromJson)
           .toList(),
-      shippingAddress: ShippingAddressModel.fromJson(json['shipping_address']),
+      shippingAddress: ShippingAddressModel.fromOrderJson(json),
       createdAt: DateTime.tryParse(json['created_at']?.toString() ?? ''),
       updatedAt: DateTime.tryParse(json['updated_at']?.toString() ?? ''),
     );
@@ -120,14 +144,6 @@ class OrdersResponse {
           .toList(),
     );
   }
-}
-
-String formatIdr(num amount) {
-  final value = amount.round().toString();
-  return '${AppConstants.currencyPrefix} ${value.replaceAllMapped(
-    RegExp(r'\B(?=(\d{3})+(?!\d))'),
-    (_) => '.',
-  )}';
 }
 
 extension OrderStatusPresentation on OrderStatus {

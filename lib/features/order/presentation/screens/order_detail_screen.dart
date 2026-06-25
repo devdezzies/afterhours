@@ -1,4 +1,5 @@
 import 'package:afterhours/core/theme/app_theme.dart';
+import 'package:afterhours/core/utils/currency_formatter.dart';
 import 'package:afterhours/features/order/data/models/order_model.dart';
 import 'package:afterhours/features/order/presentation/providers/order_provider.dart';
 import 'package:flutter/material.dart';

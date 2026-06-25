@@ -1,4 +1,3 @@
-import 'package:afterhours/core/constants/app_constants.dart';
 import 'package:afterhours/core/utils/api_result.dart';
 import 'package:afterhours/features/product/data/models/datasources/product_remote_datasource.dart';
 import 'package:afterhours/features/product/data/models/product_model.dart';
@@ -11,13 +10,15 @@ class ProductRepository {
 
   Future<ApiResult<PaginatedProducts>> getProducts({
     int page = 1,
-    ProductCategory? category,
+    int? perPage,
+    String? category,
     double? maxPrice,
     List<String>? keywords,
   }) {
     return runApiCall(() async {
       final json = await remoteDataSource.fetchProducts(
         page: page,
+        perPage: perPage,
         category: category,
         maxPrice: maxPrice,
         keywords: keywords,
